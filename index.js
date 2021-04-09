@@ -29,6 +29,19 @@ app.get('/api/persons', (req, res) => {
 	res.send(persons)
 })
 
+app.get('/info', (req, res) => {
+	const currentTime = new Date()
+
+	res.send(
+		`
+        <div>
+            <p>Phonebook has info for ${persons.length} people</p>
+            <p>${currentTime}</p>
+        </div>
+        `
+	)
+})
+
 const PORT = 3001
 
 app.listen(PORT)
