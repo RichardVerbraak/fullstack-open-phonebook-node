@@ -63,17 +63,34 @@ app.get('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
 	const { name, number } = req.body
 
-	const id = Math.floor(Math.random() * 10000)
+	if (name && number) {
+		const findPerson = persons.find((person) => {
+			return person.name.toLowerCase() === name.toLowerCase()
+		})
 
-	const person = {
-		id,
-		name,
-		number,
+		const exists = findPerson.name.toLowerCase() === name.toLowerCase()
+
+		if (!exists) {
+			const id = Math.floor(Math.random() * 10000)
+
+			const person = {
+				id,
+				name,
+				number,
+			}
+
+			persons = [...persons, person]
+
+			res.status(200)
+			res.send(persons)
+		} else {
+			res.status(303)
+			res.json({ error: 'User already exists' })
+		}
+	} else {
+		res.status(404)
+		res.json({ error: 'Name or number missing' })
 	}
-
-	persons = [...persons, person]
-
-	res.send(persons)
 })
 
 app.delete('/api/persons/:id', (req, res) => {
