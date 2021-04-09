@@ -1,4 +1,5 @@
 const express = require('express')
+const morgan = require('morgan')
 
 const app = express()
 
@@ -24,6 +25,16 @@ let persons = [
 		number: '39-23-6423122',
 	},
 ]
+
+morgan.token('person', (req, res) => {
+	return JSON.stringify(req.body)
+})
+
+app.use(
+	morgan(
+		':method :url :status :res[content-length] - :response-time ms :person'
+	)
+)
 
 app.use(express.json())
 
@@ -64,11 +75,9 @@ app.post('/api/persons', (req, res) => {
 	const { name, number } = req.body
 
 	if (name && number) {
-		const findPerson = persons.find((person) => {
+		const exists = persons.find((person) => {
 			return person.name.toLowerCase() === name.toLowerCase()
 		})
-
-		const exists = findPerson.name.toLowerCase() === name.toLowerCase()
 
 		if (!exists) {
 			const id = Math.floor(Math.random() * 10000)
